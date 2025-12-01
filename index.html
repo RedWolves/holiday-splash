@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ralph’s Bricks Holiday Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('store.jpg') center center / cover no-repeat;
+      position: relative;
+      font-family: 'Mountains of Christmas', cursive, sans-serif;
+      color: #b30000;
+    }
+
+    /* Soft white translucent overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.55);
+      z-index: 0;
+    }
+    #toggleButton {
+        position: absolute;
+        top: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.4em;
+        background: #b30000;
+        color: white;
+        border: none;
+        padding: 18px 36px;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        transition: background 0.3s, transform 0.2s;
+        z-index: 2;
+        animation: pulse 2s infinite; /* Add pulse animation */
+        }
+
+        #toggleButton:hover {
+        background: #ff3333;
+        transform: translateX(-50%) scale(1.1);
+        }
+
+        /* Pulse animation */
+        @keyframes pulse {
+        0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.3);}
+        50% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 30px rgba(255,255,255,0.6);}
+        100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.3);}
+        }
+
+        h1 {
+        position: absolute;
+        top: 15%; /* pushed slightly down to make room for button */
+        width: 100%;
+        text-align: center;
+        font-size: 2.8em;
+        color: #b30000;
+        text-shadow: 2px 2px 6px #fff;
+        z-index: 0;
+        }
+
+        .logo-container {
+        position: absolute;
+        top: 30%; /* adjust vertical position under heading */
+        width: 100%;
+        text-align: center;
+        z-index: 0;
+        }
+
+        .logo {
+        max-width: 500px;
+        height: auto;
+        filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.5)); /* adds shadow */
+  transition: filter 0.3s;
+        }
+
+    .snowflake {
+      position: fixed;
+      top: -50px;
+      background: url('4073.png') no-repeat center/contain;
+      opacity: 0.9;
+      z-index: 1;
+      pointer-events: none;
+      animation-name: fall, sway;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: 1, infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--drift), 110vh) rotate(720deg); opacity: 0.8; }
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(var(--sway)); }
+    }
+
+    .snowpile {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 20vh;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .snowpile img {
+      position: absolute;
+      bottom: 0;
+      width: 20px;
+      height: 20px;
+      background: url('4073.png') no-repeat center/contain;
+      opacity: 0.9;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="music-container">
+    <button id="toggleButton">🎵 Enjoy Our Holiday Gift of Music 🎵</button>
+  </div>
+
+  <h1>
+    🎅🏻🎵 Merry Brickmas 🎶🎄
+  </h1>
+  <div class="logo-container">
+    <img id="logoImage" src="logo.png" alt="Ralph's Bricks Logo" class="logo">
+  </div>
+
+  
+
+  <audio id="holidayMusic" src="holidaymusic.mp3" loop></audio>
+
+  <div class="snowpile" id="snowpile"></div>
+
+  <script>
+    // --- Audio toggle ---
+    const audio = document.getElementById('holidayMusic');
+    const button = document.getElementById('toggleButton');
+    const logo = document.getElementById('logoImage');
+    let musicOn = false;
+
+    button.addEventListener('click', () => {
+    if (!musicOn) {
+        audio.muted = false;   // unmute
+        audio.play();           // start playback
+        button.textContent = '🔊 Mute Music';
+        musicOn = true;
+        logo.src = 'MerryBrickmas-Bunny.png'; // swap to bunny
+    } else {
+        audio.pause();          // stop playback
+        button.textContent = '🎶 Enjoy Our Holiday Gift of Music 🎶';
+        musicOn = false;
+        logo.src = 'logo.png'; // swap back to original logo
+    }
+    });
+
+    // --- Falling LEGO 1x1 plates ---
+    const numSnowflakes = 50;
+
+    for (let i = 0; i < numSnowflakes; i++) {
+      const flake = document.createElement('img');
+      flake.src = '4073.png';
+      flake.classList.add('snowflake');
+      document.body.appendChild(flake);
+      resetFlake(flake);
+      animateFlake(flake);
+    }
+
+    function resetFlake(flake) {
+      flake.style.left = Math.random() * window.innerWidth + 'px';
+      flake.style.top = (-50 - Math.random() * 200) + 'px';
+      flake.style.width = (10 + Math.random() * 20) + 'px';
+      flake.dataset.speed = 1.5 + Math.random() * 3.5;
+      flake.dataset.direction = Math.random() < 0.5 ? -1 : 1;
+      flake.dataset.drift = 0.5 + Math.random();
+      flake.dataset.rotation = Math.random() * 360;
+      flake.style.transform = `rotate(${flake.dataset.rotation}deg)`;
+    }
+
+    function animateFlake(flake) {
+      let y = parseFloat(flake.style.top);
+      let x = parseFloat(flake.style.left);
+      const speed = parseFloat(flake.dataset.speed);
+      const drift = parseFloat(flake.dataset.drift);
+      const dir = parseFloat(flake.dataset.direction);
+      let rotation = parseFloat(flake.dataset.rotation);
+
+      function fall() {
+        y += speed;
+        x += drift * dir;
+        rotation += 0.5 * dir;
+        flake.style.top = y + 'px';
+        flake.style.left = x + 'px';
+        flake.style.transform = `rotate(${rotation}deg)`;
+
+        if (y > window.innerHeight + 50 || x < -50 || x > window.innerWidth + 50) {
+          resetFlake(flake);
+          y = parseFloat(flake.style.top);
+          x = parseFloat(flake.style.left);
+        }
+
+        requestAnimationFrame(fall);
+      }
+      fall();
+    }
+
+    // --- Snowpile at bottom ---
+    const snowpile = document.getElementById('snowpile');
+    const pileCount = 2000; // 3x density
+
+    for (let i = 0; i < pileCount; i++) {
+      const flake = document.createElement('img');
+      flake.src = '4073.png';
+      flake.classList.add('pileflake');
+
+      const x = (i / pileCount) * window.innerWidth + Math.random() * 15 - 7;
+      const size = 10 + Math.random() * 20;
+      const yOffset = Math.sin(i / 6) * 15 + Math.random() * 25;
+
+      flake.style.left = x + 'px';
+      flake.style.bottom = yOffset + 'px';
+      flake.style.width = size + 'px';
+      flake.style.transform = `rotate(${Math.random() * 360}deg)`;
+      snowpile.appendChild(flake);
+    }
+  </script>
+</body>
+</html>
